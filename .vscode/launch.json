@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run snip backend",
+      "request": "launch",
+      "mainClass": "dev.snip.backend.BackendApplication",
+      "projectName": "backend",
+      "envFile": "${workspaceFolder}/backend/.env"
+    }
+  ]
+}

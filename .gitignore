@@ -1,0 +1,5 @@
+ls -la && echo "---" && ls -la .vscode 2>/dev/null && echo "---" && cat src/main/resources/application.yml# Secrets
+.env
+
+# macOS
+.DS_Store
