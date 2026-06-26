@@ -62,3 +62,16 @@ shorten anything, which may reduce casual use.
 **Rationale:** 100ms is below the threshold where a human perceives delay, so the redirect feels instant. It is realistically achievable with a single indexed lookup, unlike a tighter target such as 20ms, which could not be guaranteed once database and network time are accounted for - and any number we commit to must be one we can defend.
 
 **Consequences:** The short-code column must be indexed, or lookups slow down as the table grows. The target also rules out slow per-request work on the redirect path - synchronous external calls, heavy computation, or making the redirect wait on click-tracking writes - which foreshadows a Sprint 2 decision: click tracking must not block the redirect.
+
+## ADR-006: PostgreSQL on Neon
+
+**Context:** Snip needs to store links, users, and click data. We needed to choose a database engine and where to host it. These are two separate decisions: what kind of database, and where it runs.
+
+**Decision:** Use PostgreSQL as the database engine, hosted on Neon (managed serverless Postgres).
+
+**Rationale:**
+- Engine: The data is relational in nature - users have links, links have short codes, and clicks carry information tied to a link - so a relational (SQL) database fits naturally over a NoSQL store.
+- Why Postgres specifically: It is strict on data integrity (it rejects blank values unless a column is explicitly nullable), it is the industry-standard open-source relational database which makes the skill directly employable, and it keeps snip consistent with JavaCup, giving more reps on one engine.
+- Host: Neon is a managed serverless Postgres host, so we avoid installing and administering Postgres locally, it scales to zero when idle, and it provides a cloud-hosted, production-ready database.
+
+**Consequences:** A serverless database that scales to zero can have a slower first query (cold start) after a period of inactivity. The upside is that because the database already lives in the cloud rather than on the local machine, it is deployment-ready for Sprint 6 with no migration needed when the app goes live.
